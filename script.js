@@ -22,27 +22,35 @@ function playRound(computer, player) {
     }
 }
 
-function game(player) {
+function game() {
     let playerWin = 0;
 
     for(let i = 0; i < 5; i++){
+        let player = "";
+        while(player.length == 0)
+            player = window.prompt("Enter your choice:", "");
+
         let computer = getComputerChoice();
         console.log("Player Selection: " + player);
         console.log("Computer Selection: " + computer);
+
         let result = playRound(computer, player);
-        console.log(result);
+        console.log(">> " + result);
         if(result.includes("You Win")){
             playerWin++;
+        } else if(result.includes("tie")){
+            i--;
         }
     }
 
     if(playerWin >= 3) {
-        console.log("Congratulations! You win " + playerWin + " rounds");
+        console.log("Congratulations! You win " + playerWin + " of 5 rounds");
     } else {
-        console.log("Aww! You lose!");
+        console.log("Aww! You lost " + (5-playerWin) + " of 5 rounds");
     }
-
-    
 }
-const player = "papeR";
-game(player);
+
+console.log("Welcome to Rock, Paper, Scissors game");
+console.log("NOTE: Tied rounds are repeated");
+
+game();
