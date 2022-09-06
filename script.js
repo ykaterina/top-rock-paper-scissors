@@ -1,56 +1,92 @@
 function getComputerChoice() {
     const valuesArr = ['Rock', 'Paper', 'Scissors'];
     const random = Math.floor(Math.random() * valuesArr.length);
-    return valuesArr[random];
+   return valuesArr[random];
+}
+
+function getPlayerSelection(e) {
+   return e.target.textContent;
 }
 
 function playRound(computer, player) {
     const valuesArr = ['Rock', 'Paper', 'Scissors'];
-    let compIn = valuesArr.indexOf(computer);
-    let plyIn = valuesArr.indexOf(player[0].toUpperCase() + player.slice(1).toLowerCase());
+    let computerIndex = valuesArr.indexOf(computer);
+    let playerIndex = valuesArr.indexOf(player[0].toUpperCase() + player.slice(1).toLowerCase());
 
-    if(compIn == plyIn) {
+    if(computerIndex == playerIndex) {
         return "It's a tie!";
-    } else if (compIn == 0 && plyIn == 2) {
+    } else if (computerIndex == 0 && playerIndex == 2) {
         return "You Lose! Rock beats Scissors";
-    } else if (plyIn == 0 && compIn == 2) {
+    } else if (playerIndex == 0 && computerIndex == 2) {
         return "You Win! Rock beats Scissors"
-    } else if (compIn > plyIn) {
-        return `You Lose! ${valuesArr[compIn]} beats ${valuesArr[plyIn]}`;
-    } else if (plyIn > compIn) {
-        return `You Win! ${valuesArr[plyIn]} beats ${valuesArr[compIn]}`;
+    } else if (computerIndex > playerIndex) {
+        return `You Lose! ${valuesArr[computerIndex]} beats ${valuesArr[playerIndex]}`;
+    } else if (playerIndex > computerIndex) {
+        return `You Win! ${valuesArr[playerIndex]} beats ${valuesArr[computerIndex]}`;
     }
 }
 
-function game() {
-    let playerWin = 0;
+function reset(){
+    const resetDiv = document.createElement('div');
+    const resetBtn = document.createElement('button');
+    const body = document.querySelector('body');
 
-    for(let i = 0; i < 5; i++){
-        let player = "";
-        while(player.length == 0)
-            player = window.prompt("Enter your choice:", "");
+    resetBtn.textContent = "RESET";
+    resetDiv.appendChild(resetBtn);
+    body.appendChild(resetDiv);
 
-        let computer = getComputerChoice();
-        console.log("Player Selection: " + player);
-        console.log("Computer Selection: " + computer);
+    resetBtn.addEventListener('click', function(e){
+        playerWin = 0;
+        computerWin = 0;
+        player.textContent = `Player: ${playerWin}`;
+        computer.textContent = `Computer: ${computerWin}`;
+        const results = document.querySelectorAll('.result');
+        for(const result of results){
+            result.parentNode.removeChild(result);
+        }
+        this.parentNode.removeChild(this);
+        choices.forEach(choice => choice.disabled = false);
+    });
+}
 
-        let result = playRound(computer, player);
-        console.log(">> " + result);
-        if(result.includes("You Win")){
-            playerWin++;
-        } else if(result.includes("tie")){
-            i--;
+function gameOver(text) {
+    const winner = document.createElement('div');
+    winner.textContent = text;
+    winner.classList.add('result');
+    result.appendChild(winner);
+    choices.forEach(choice => choice.disabled = true);
+    reset();
+}
+
+let playerWin = 0;
+let computerWin = 0;
+
+const result = document.querySelector('.results')
+const choices = document.querySelectorAll(".choice");
+const score = document.querySelector("#score");
+const player = document.querySelector("#player");
+const computer = document.querySelector("#computer");
+
+choices.forEach(choice => choice.addEventListener('click', function(e) {
+    const roundResult = playRound(getComputerChoice(), getPlayerSelection(e));
+    const res = document.createElement('div');
+    res.classList.add('result');
+    res.textContent = roundResult;
+    result.appendChild(res);
+
+    if(roundResult.includes("You Win")){
+        playerWin++;
+        player.textContent = `Player: ${playerWin}`;
+        score.appendChild(player);
+        if(playerWin === 5){
+            gameOver("Hurray! You won 5 times!");
+        }
+    } else if(roundResult.includes("You Lose")){
+        computerWin++;
+        computer.textContent = `Computer: ${computerWin}`;
+        score.appendChild(computer);
+        if(computerWin === 5){
+            gameOver("Oh dear, Computer won 5 times...");
         }
     }
-
-    if(playerWin >= 3) {
-        console.log("Congratulations! You win " + playerWin + " of 5 rounds");
-    } else {
-        console.log("Aww! You lost " + (5-playerWin) + " of 5 rounds");
-    }
-}
-
-console.log("Welcome to Rock, Paper, Scissors game");
-console.log("NOTE: Tied rounds are repeated");
-
-game();
+}));
