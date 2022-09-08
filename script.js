@@ -5,7 +5,9 @@ function getComputerChoice() {
 }
 
 function getPlayerSelection(e) {
-   return e.target.textContent;
+    e.target.style.width = '180px';
+    e.target.style.height = '180px';
+   return e.target.id;
 }
 
 function playRound(computer, player) {
@@ -63,13 +65,15 @@ let computerWin = 0;
 
 const result = document.querySelector('.results')
 const choices = document.querySelectorAll(".choice");
-const score = document.querySelector("#score");
+const score = document.querySelectorAll(".score");
 const player = document.querySelector("#player");
 const computer = document.querySelector("#computer");
 
 choices.forEach(choice => choice.addEventListener('click', function(e) {
     const roundResult = playRound(getComputerChoice(), getPlayerSelection(e));
     const res = document.createElement('div');
+    res.style.cssText = "text-align: center; font-size: 24px";
+
     res.classList.add('result');
     res.textContent = roundResult;
     result.appendChild(res);
