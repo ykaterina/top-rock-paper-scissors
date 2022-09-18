@@ -9,7 +9,20 @@
         <div class="top">
             <h1>Let's Play!</h1>
         </div>
-        <div class="main">
+        <div class="main" data-action="eventHandler">
+            <div class="computer side">
+                <span>COMPUTER</span>
+                <span id="computer">0</span>
+                <div class="choices">
+                    <button disabled class="choice" id="rock"></button>
+                    <button disabled class="choice" id="paper"></button>
+                    <button disabled class="choice" id="scissors"></button>
+                </div>
+            </div>
+            <div class="scoreboard">
+                <h5>SCOREBOARD</h5>
+                <div class="results"></div>
+            </div>
             <div class="player side">
                 <span>PLAYER</span>
                 <span id="player">0</span>
@@ -19,21 +32,7 @@
                     <button class="choice" id="scissors"></button>
                 </div>
             </div>
-            <div class="scoreboard">
-                <h5>SCOREBOARD</h5>
-                <div class="results"></div>
-            </div>
-            <div class="computer side">
-                <span>COMPUTER</span>
-                <span id="computer">0</span>
-                <div class="choices">
-                    <button class="choice" id="rock"></button>
-                    <button class="choice" id="paper"></button>
-                    <button class="choice" id="scissors"></button>
-                </div>
-            </div>
         </div>
-        
         <script src="script.js"></script>
     </body>
 </html>

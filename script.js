@@ -5,9 +5,13 @@ function getComputerChoice() {
 }
 
 function getPlayerSelection(e) {
-    e.target.style.width = '180px';
-    e.target.style.height = '180px';
+    e.target.classList.add('selected');
    return e.target.id;
+}
+
+function computerListener(comp){
+    const comChoice = document.querySelector(`.computer #${comp.toLowerCase()}`);
+    comChoice.classList.add('compSelected');
 }
 
 function playRound(computer, player) {
@@ -28,36 +32,67 @@ function playRound(computer, player) {
     }
 }
 
-function reset(){
-    const resetDiv = document.createElement('div');
-    const resetBtn = document.createElement('button');
+function displayScore(roundResult){
+    if(roundResult.includes("You Win")){
+        playerWin++;
+        player.textContent = `${playerWin}`;
+        if(playerWin === 5){
+            gameOver("Hurray! You won 5 times!");
+        }
+    } else if(roundResult.includes("You Lose")){
+        computerWin++;
+        computer.textContent = `${computerWin}`;
+        if(computerWin === 5){
+            gameOver("Oh dear, Computer won 5 times...");
+        }
+    }
+}
+
+function gameOver(text) {
     const body = document.querySelector('body');
-
+    const overlay = document.createElement('div');
+    const popup = document.createElement('div');
+    const header = document.createElement('h2');
+    const content = document.createElement('span');
+    const resetBtn = document.createElement('button');
+    
+    overlay.style.cssText = "position: relative; position: fixed; top: 0; right: 0; bottom: 0;"
+                            + "left: 0; background: rgba(0,0,0,.8);";
+    popup.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: space-between;"
+                            + "width: 40%; height: 30%; background: #F5F5DC; border-radius: 20px; position: absolute;"
+                            + "top: 0; right: 0; bottom: 0px; left: 0; margin: auto; font-size: 24px; padding: 10px;"
+                            + "font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;";
+    resetBtn.style.cssText = "font-size: 18px; margin: 10px; width: 100px; padding: 5px 10px; background: #FFE4E1; border-radius: 5px;"
+    header.textContent = "GAME OVER";
+    content.textContent = text;
     resetBtn.textContent = "RESET";
-    resetDiv.appendChild(resetBtn);
-    body.appendChild(resetDiv);
-
-    resetBtn.addEventListener('click', function(e){
+    resetBtn.setAttribute("id", "reset");
+    popup.appendChild(header);
+    popup.appendChild(content);
+    popup.appendChild(resetBtn);
+    overlay.appendChild(popup);
+    body.appendChild(overlay);
+    
+    choices.forEach(choice=> choice.setAttribute('disabled', true));
+    resetBtn.addEventListener('click', function(){
         playerWin = 0;
         computerWin = 0;
-        player.textContent = `Player: ${playerWin}`;
-        computer.textContent = `Computer: ${computerWin}`;
+        player.textContent = `${playerWin}`;
+        computer.textContent = `${computerWin}`;
         const results = document.querySelectorAll('.result');
         for(const result of results){
             result.parentNode.removeChild(result);
         }
         this.parentNode.removeChild(this);
-        choices.forEach(choice => choice.disabled = false);
+        body.removeChild(overlay);
+        choices.forEach(choice=> choice.removeAttribute("disabled"));
     });
 }
 
-function gameOver(text) {
-    const winner = document.createElement('div');
-    winner.textContent = text;
-    winner.classList.add('result');
-    result.appendChild(winner);
-    choices.forEach(choice => choice.disabled = true);
-    reset();
+function removeTransition(e) {
+    if(e.propertyName !== 'transform') return;
+    this.classList.remove('selected');
+    this.classList.remove('compSelected');
 }
 
 let playerWin = 0;
@@ -65,32 +100,29 @@ let computerWin = 0;
 
 const result = document.querySelector('.results')
 const choices = document.querySelectorAll(".choice");
-const score = document.querySelectorAll(".score");
+const playerside = document.querySelector(".player");
+const computerside = document.querySelector(".computer");
+
 const player = document.querySelector("#player");
 const computer = document.querySelector("#computer");
 
-choices.forEach(choice => choice.addEventListener('click', function(e) {
-    const roundResult = playRound(getComputerChoice(), getPlayerSelection(e));
-    const res = document.createElement('div');
-    res.style.cssText = "text-align: center; font-size: 24px";
+choices.forEach(choice => 
+    choice.addEventListener('transitionend', removeTransition),
+);
 
-    res.classList.add('result');
-    res.textContent = roundResult;
-    result.appendChild(res);
+window.addEventListener('click', function(e) {
+    if(e.target.parentNode == null || e.target.parentNode.classList[0] !== "choices") return;
+    else {
+        const comp = getComputerChoice();
+        const roundResult = playRound(comp, getPlayerSelection(e));
+        const res = document.createElement('div');
+        res.style.cssText = "text-align: center; font-size: 18px; padding: 10px;";
 
-    if(roundResult.includes("You Win")){
-        playerWin++;
-        player.textContent = `Player: ${playerWin}`;
-        score.appendChild(player);
-        if(playerWin === 5){
-            gameOver("Hurray! You won 5 times!");
-        }
-    } else if(roundResult.includes("You Lose")){
-        computerWin++;
-        computer.textContent = `Computer: ${computerWin}`;
-        score.appendChild(computer);
-        if(computerWin === 5){
-            gameOver("Oh dear, Computer won 5 times...");
-        }
+        res.classList.add('result');
+        res.textContent = roundResult;
+        result.appendChild(res);
+
+        computerListener(comp);
+        displayScore(roundResult);
     }
-}));
+});
