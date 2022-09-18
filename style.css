@@ -71,20 +71,20 @@ h1 {
 }
 
 #rock {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     background: url('./images/rock.jpg') transparent center/cover no-repeat;
 }
 
 #paper {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     background: url('./images/paper.jpg') transparent center/cover no-repeat;
 }
 
 #scissors {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     background: url('./images/scissors.jpeg') transparent center/cover no-repeat;
 }
 
